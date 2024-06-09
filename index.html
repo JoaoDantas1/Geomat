@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz sobre Desmatamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #72EDF2 10%, #5151E5 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: #333;
+    }
+    .quiz-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+        text-align: center;
+        animation: fadeIn 1s ease-in-out;
+        position: relative;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .quiz-container:before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        bottom: -10px;
+        left: -10px;
+        background: linear-gradient(45deg, #ff4081, #81d4fa);
+        z-index: -1;
+        border-radius: 10px;
+        filter: blur(10px);
+    }
+    .pergunta {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    .opcoes button {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        margin: 10px 0;
+        font-size: 1.1em;
+        cursor: pointer;
+        border: 2px solid transparent;
+        border-radius: 5px;
+        background-color: #f1f1f1;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+    .opcoes button:hover {
+        background-color: #e0e0e0;
+        border-color: #007bff;
+    }
+    .opcoes button:focus {
+        outline: none;
+        border-color: #007bff;
+    }
+    #botao-enviar {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1em;
+        margin-top: 20px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        transition: background-color 0.3s;
+    }
+    #botao-enviar:hover {
+        background-color: #0056b3;
+    }
+    .barra-progresso {
+        height: 10px;
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    .barra-progresso-inner {
+        height: 100%;
+        width: 0;
+        background-color: #007bff;
+        transition: width 0.4s ease;
+    }
+    .resultado {
+        display: none;
+        margin-top: 20px;
+        font-size: 1.2em;
+    }
+    .animacao-ruim, .animacao-boa {
+        display: none;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="barra-progresso">
+        <div class="barra-progresso-inner" id="barra-progresso-inner"></div>
+    </div>
+    <div id="pergunta" class="pergunta"></div>
+    <div id="opcoes" class="opcoes"></div>
+    <button id="botao-enviar">Enviar</button>
+    <div id="resultado" class="resultado"></div>
+    <div id="animacao-ruim" class="animacao-ruim">
+        <img src="https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif" alt="Animação Ruim" />
+    </div>
+    <div id="animacao-boa" class="animacao-boa">
+        <img src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif" alt="Animação Boa" />
+    </div>
+</div>
+
+<script>
+// Defina suas perguntas e respostas do quiz sobre desmatamento
+const quizData = [
+    {
+        pergunta: "Qual é a principal causa do desmatamento na Amazônia?",
+        opcoes: ["Agricultura", "Mineração", "Urbanização", "Mudança climática"],
+        resposta: "Agricultura"
+    },
+    {
+        pergunta: "Qual das seguintes é uma consequência direta do desmatamento?",
+        opcoes: ["Aumento da biodiversidade", "Redução das emissões de carbono", "Perda de habitat", "Aumento da área florestal"],
+        resposta: "Perda de habitat"
+    },
+    {
+        pergunta: "Que porcentagem da cobertura florestal mundial foi perdida desde 1990?",
+        opcoes: ["Cerca de 8%", "Cerca de 20%", "Cerca de 15%", "Cerca de 5%"],
+        resposta: "Cerca de 8%"
+    },
+    {
+        pergunta: "Qual das seguintes práticas pode ajudar a reduzir o desmatamento?",
+        opcoes: ["Queimadas", "Corte raso", "Silvicultura sustentável", "Exploração madeireira ilegal"],
+        resposta: "Silvicultura sustentável"
+    },
+    {
+        pergunta: "Qual bioma é mais afetado pelo desmatamento no Brasil?",
+        opcoes: ["Pantanal", "Amazônia", "Caatinga", "Mata Atlântica"],
+        resposta: "Amazônia"
+    },
+    {
+        pergunta: "O que é reflorestamento?",
+        opcoes: ["Destruição de florestas para agricultura", "Plantio de árvores para restaurar florestas", "Exploração de recursos florestais", "Queima de florestas para abrir espaço"],
+        resposta: "Plantio de árvores para restaurar florestas"
+    },
+    {
+        pergunta: "Qual gás de efeito estufa é liberado em grandes quantidades devido ao desmatamento?",
+        opcoes: ["Oxigênio", "Metano", "Dióxido de carbono", "Nitrogênio"],
+        resposta: "Dióxido de carbono"
+    },
+    {
+        pergunta: "Qual organização internacional trabalha para proteger florestas ao redor do mundo?",
+        opcoes: ["OMS", "FMI", "WWF", "OTAN"],
+        resposta: "WWF"
+    },
+    {
+        pergunta: "Qual país possui a maior área de floresta tropical do mundo?",
+        opcoes: ["Brasil", "Indonésia", "Congo", "Peru"],
+        resposta: "Brasil"
+    },
+    {
+        pergunta: "Qual é um dos métodos usados para medir a taxa de desmatamento?",
+        opcoes: ["Análise de DNA", "Sensoriamento remoto", "Contagem manual de árvores", "Mapeamento verbal"],
+        resposta: "Sensoriamento remoto"
+    }
+];
+
+// Variáveis para rastrear a pergunta atual e a pontuação
+let perguntaAtual = 0;
+let pontuacao = 0;
+
+// Função para carregar a pergunta e as opções
+function carregarPergunta() {
+    const perguntaElemento = document.getElementById('pergunta');
+    const opcoesElemento = document.getElementById('opcoes');
+    const progressoElemento = document.getElementById('barra-progresso-inner');
+    
+    perguntaElemento.innerText = quizData[perguntaAtual].pergunta;
+    opcoesElemento.innerHTML = "";
+
+    quizData[perguntaAtual].opcoes.forEach(opcao => {
+        const botao = document.createElement('button');
+        botao.innerText = opcao;
+        botao.classList.add('opcao-btn');
+        botao.addEventListener('click', () => selecionarOpcao(opcao));
+        opcoesElemento.appendChild(botao);
+    });
+
+    progressoElemento.style.width = `${(perguntaAtual / quizData.length) * 100}%`;
+}
+
+// Função para selecionar uma opção
+function selecionarOpcao(opcao) {
+    const respostaCorreta = quizData[perguntaAtual].resposta;
+    if (opcao === respostaCorreta) {
+        pontuacao++;
+    }
+    perguntaAtual++;
+    if (perguntaAtual < quizData.length) {
+        carregarPergunta();
+    } else {
+        mostrarResultado();
+    }
+}
+
+// Função para mostrar o resultado
+function mostrarResultado() {
+    document.getElementById('pergunta').innerText = `Você acertou ${pontuacao} de ${quizData.length} perguntas.`;
+    document.getElementById('opcoes').innerHTML = "";
+    document.getElementById('botao-enviar').style.display = 'none';
+    document.getElementById('barra-progresso-inner').style.width = '100%';
+    const resultadoElemento = document.getElementById('resultado');
+    resultadoElemento.style.display = 'block';
+    if (pontuacao >= 5) {
+        resultadoElemento.innerText = "Parabéns! Você foi muito bem!";
+        document.getElementById('animacao-boa').style.display = 'block';
+    } else {
+        resultadoElemento.innerText = "Que pena! Você pode fazer melhor!";
+        document.getElementById('animacao-ruim').style.display = 'block';
+    }
+}
+
+// Carregar a primeira pergunta quando a página for carregada
+carregarPergunta();
+
+// Evento de clique para o botão de enviar
+document.getElementById('botao-enviar').addEventListener('click', () => mostrarResultado());
+
+</script>
+
+</body>
+</html>
